@@ -1,0 +1,223 @@
+{
+  "title": "TrainConfig",
+  "type": "object",
+  "properties": {
+    "source": {
+      "$ref": "#/definitions/TrainSource"
+    },
+    "creator": {
+      "$ref": "#/definitions/Creator"
+    },
+    "proposal_id": {
+      "title": "Proposal Id",
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "@id": {
+      "title": "@Id",
+      "type": "string"
+    },
+    "@context": {
+      "title": "@Context",
+      "type": "object"
+    },
+    "session_id": {
+      "title": "Session Id",
+      "type": "string"
+    },
+    "route": {
+      "title": "Route",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/RouteEntry"
+      }
+    },
+    "file_list": {
+      "title": "File List",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "immutable_file_hash": {
+      "title": "Immutable File Hash",
+      "type": "string"
+    },
+    "immutable_file_signature": {
+      "title": "Immutable File Signature",
+      "type": "string"
+    },
+    "result_hash": {
+      "title": "Result Hash",
+      "type": "string"
+    },
+    "result_signature": {
+      "title": "Result Signature",
+      "type": "string"
+    }
+  },
+  "required": [
+    "source",
+    "creator",
+    "proposal_id",
+    "@id",
+    "session_id",
+    "route",
+    "file_list",
+    "immutable_file_hash",
+    "immutable_file_signature"
+  ],
+  "definitions": {
+    "TrainSourceType": {
+      "title": "TrainSourceType",
+      "description": "An enumeration.",
+      "enum": [
+        "image_repository",
+        "git_repository"
+      ],
+      "type": "string"
+    },
+    "TrainSource": {
+      "title": "TrainSource",
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TrainSourceType"
+        },
+        "address": {
+          "title": "Address",
+          "type": "string"
+        },
+        "tag": {
+          "title": "Tag",
+          "type": "string"
+        },
+        "branch": {
+          "title": "Branch",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "address"
+      ]
+    },
+    "Creator": {
+      "title": "Creator",
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "rsa_public_key": {
+          "title": "Rsa Public Key",
+          "type": "string"
+        },
+        "paillier_public_key": {
+          "title": "Paillier Public Key",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "encrypted_key": {
+          "title": "Encrypted Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "rsa_public_key"
+      ]
+    },
+    "Ecosystem": {
+      "title": "Ecosystem",
+      "description": "An enumeration.",
+      "enum": [
+        "tue",
+        "aac"
+      ],
+      "type": "string"
+    },
+    "StationSignature": {
+      "title": "StationSignature",
+      "type": "object",
+      "properties": {
+        "digest": {
+          "title": "Digest",
+          "type": "string"
+        },
+        "signature": {
+          "title": "Signature",
+          "type": "string"
+        }
+      },
+      "required": [
+        "digest",
+        "signature"
+      ]
+    },
+    "RouteEntry": {
+      "title": "RouteEntry",
+      "type": "object",
+      "properties": {
+        "station": {
+          "title": "Station",
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "eco_system": {
+          "$ref": "#/definitions/Ecosystem"
+        },
+        "rsa_public_key": {
+          "title": "Rsa Public Key",
+          "type": "string"
+        },
+        "index": {
+          "title": "Index",
+          "type": "integer"
+        },
+        "signature": {
+          "$ref": "#/definitions/StationSignature"
+        },
+        "encrypted_key": {
+          "title": "Encrypted Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "station",
+        "eco_system",
+        "rsa_public_key",
+        "index"
+      ]
+    }
+  }
+}
