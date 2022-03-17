@@ -2,5 +2,5 @@ minio
 numpy
 pandas
 neurolab
-scikit-learn==0.22.1
+scikit-learn
 missingpy
