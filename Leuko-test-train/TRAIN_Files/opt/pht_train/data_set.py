@@ -1,19 +1,24 @@
 import glob
 import os
+import sys
 
 from minio import Minio
 import pandas as pd
+import sklearn.neighbors._base
+
+sys.modules['sklearn.neighbors.base'] = sklearn.neighbors._base
 from missingpy import MissForest
 from sklearn.preprocessing import StandardScaler
+
 
 class DataSet:
 
     def __init__(self, data_path):
         self.data_path = data_path
         self.data_raw = self._load_data()
-        self.data_clean = self._clean_data(self.data_raw )
-        self.data_filled = self._fill_missing(self.data_clean)
-        print(self.data)
+        self.data_clean = self._clean_data(self.data_raw)
+
+
 
     def _load_data(self):
         if os.environ.get('MINIO_ADDRESS') is not None:
@@ -61,7 +66,7 @@ class DataSet:
                 matched_record_ids_none.append(number)
             number = number + 1
 
-        df_labels =  raw_df.iloc[matched_record_ids_none, :]
+        df_labels = raw_df.iloc[matched_record_ids_none, :]
 
         df_only_labels = df_labels[df_labels["redcap_repeat_instrument"].isna()]
 
@@ -353,7 +358,6 @@ class DataSet:
                 (list(only_symptoms_final["visi"] == 2)) and list((only_symptoms_final["cvi"].isna()))] = 0
             only_symptoms_final["cvi"][only_symptoms_final["cvi"].isna()] = 0
 
-
             only_symptoms_final["sim"][
                 (only_symptoms_final["visit1_fir"] == 1) == (only_symptoms_final["sim"].isna())] = -1
             only_symptoms_final["sim"][
@@ -520,6 +524,10 @@ class DataSet:
             print(e)
         only_symptoms_final.drop("visit1_fir", 1)
         only_symptoms_final.drop("examination_data_use_new_sheet_for_every_visit_complete", 1)
+        only_symptoms_final = self._fill_missing(only_symptoms_final)
+        sc = StandardScaler()
+
+        only_symptoms_final = pd.DataFrame(sc.fit_transform(only_symptoms_final.values))
 
         only_symptoms_final.insert(loc=0, column='label', value=labels)
 
@@ -534,9 +542,18 @@ class DataSet:
         data = pd.DataFrame(data=data_imputed, columns=data_real.columns.values.tolist())
         return data
 
+    def _transform_diagnosis_split_into_leuko_and_not_leuko(self, labels):
+        non_leuko_codes = [84]
+        leuko_codes = [2, 103, 1, 7, 29, 60]
+        for leuko_code in leuko_codes:
+            labels = labels.replace(leuko_code, 0)
+        for non_leuko_code in non_leuko_codes:
+            labels = labels.replace(non_leuko_code, 1)
+        return labels
+
     def get_data_all(self):
-        input_all = self.data_filled.iloc[:, 1:]
-        target_all = self.data_filled.iloc[:, 0]
-        sc = StandardScaler()
+        input_all = self.data_clean.iloc[:, 1:]
+
+        target_all = self._transform_diagnosis_split_into_leuko_and_not_leuko(self.data_clean.iloc[:, 0])
 
         return (input_all, target_all)
