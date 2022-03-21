@@ -1,14 +1,13 @@
 import glob
 import os
-import sys
 
 from minio import Minio
 import pandas as pd
-import sklearn.neighbors._base
 
-sys.modules['sklearn.neighbors.base'] = sklearn.neighbors._base
-from missingpy import MissForest
 from sklearn.preprocessing import StandardScaler
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.impute import IterativeImputer
+from sklearn.ensemble import  RandomForestRegressor
 
 
 class DataSet:
@@ -535,10 +534,11 @@ class DataSet:
         return only_symptoms_final
 
     def _fill_missing(self, df):
-        imputer = MissForest(missing_values=-1)
+        imputer = IterativeImputer(estimator=RandomForestRegressor(),  missing_values=-1, max_iter=5)
         data_real = df
         # del data_real[data_real.columns[0]]
-        data_imputed = imputer.fit_transform(data_real)
+        data_imputed = imputer.fit(data_real).transform(data_real)
+
         data = pd.DataFrame(data=data_imputed, columns=data_real.columns.values.tolist())
         return data
 
