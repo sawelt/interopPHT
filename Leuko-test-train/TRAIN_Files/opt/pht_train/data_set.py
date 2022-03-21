@@ -521,8 +521,10 @@ class DataSet:
         except Exception as e:
             print("Block entry doesnt work")
             print(e)
-        only_symptoms_final.drop("visit1_fir", 1)
-        only_symptoms_final.drop("examination_data_use_new_sheet_for_every_visit_complete", 1)
+
+        only_symptoms_final = only_symptoms_final.drop(columns="visit1_fir")
+        only_symptoms_final = only_symptoms_final.drop(columns="examination_data_use_new_sheet_for_every_visit_complete")
+
         only_symptoms_final = self._fill_missing(only_symptoms_final)
         sc = StandardScaler()
 
@@ -534,7 +536,7 @@ class DataSet:
         return only_symptoms_final
 
     def _fill_missing(self, df):
-        imputer = IterativeImputer(estimator=RandomForestRegressor(),  missing_values=-1, max_iter=5)
+        imputer = IterativeImputer(estimator=RandomForestRegressor(n_estimators=2),  missing_values=-1, max_iter=100)
         data_real = df
         # del data_real[data_real.columns[0]]
         data_imputed = imputer.fit(data_real).transform(data_real)
