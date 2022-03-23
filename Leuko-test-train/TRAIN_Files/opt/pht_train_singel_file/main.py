@@ -17,8 +17,10 @@ sys.modules['sklearn.neighbors.base'] = sklearn.neighbors._base
 from missingpy import MissForest
 from minio import Minio
 
-DATA_PATH ="../train_data"
-RESULT_PATH = "../pht_results"
+DATA_PATH = "/opt/train_data"
+RESULT_PATH = "/opt/pht_results"
+#DATA_PATH = "../train_data"
+#RESULT_PATH = "../pht_results"
 
 
 def getDataframe():
