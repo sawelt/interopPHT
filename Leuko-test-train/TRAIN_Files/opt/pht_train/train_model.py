@@ -1,6 +1,7 @@
+import os
+
 from sklearn.svm import SVC
-import pandas as pd
-import pickle
+
 from joblib import dump, load
 import glob
 
@@ -22,9 +23,14 @@ class TrainModel:
 
     def _save_results(self):
         y_pre_class_linear = self.model.predict(self.inputs)
-        # pd.DataFrame(linear_result).to_csv(f'{RESULT_PATH}/binary_linear.csv')
-        print(y_pre_class_linear)
-        print(self.targets)
+        if not os.path.isfile(f"{self.result_path}/station_acc.csv"):
+            with open(f"{self.result_path}/station_acc.csv", "a") as results:
+                results.write("acc\n")
+
+        with open(f"{self.result_path}/station_acc.csv", "a") as results:
+            accuracy = (y_pre_class_linear == self.targets.to_numpy()).all().mean()
+            results.write(f"{accuracy} \n")
+
 
     def _save_model(self):
         number_models = len(glob.glob(f"{self.result_path}/*.joblib"))

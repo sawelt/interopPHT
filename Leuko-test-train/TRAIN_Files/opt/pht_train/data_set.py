@@ -99,11 +99,12 @@ class DataSet:
                 columns_without_var.append(coloums)
 
         only_symptoms_final = only_symptoms_with_out_na.iloc[:, columns_without_var]
+        # loc[:, ('one', 'second')]
 
-        only_symptoms_final["visit1_fir"][only_symptoms_final["visit1_fir"].isna()] = -1  # TODO klären
+        only_symptoms_final["visit1_fir"][only_symptoms_final["visit1_fir"].isna()] = -1
 
         only_symptoms_final["cog"][only_symptoms_final["cog"].isna()] = 0
-        only_symptoms_final=self._fix_all_related_variables(only_symptoms_final)
+        only_symptoms_final = self._fix_all_related_variables(only_symptoms_final)
 
         only_symptoms_final = only_symptoms_final.drop(columns="visit1_fir")
         only_symptoms_final = only_symptoms_final.drop(
@@ -120,6 +121,8 @@ class DataSet:
         return only_symptoms_final
 
     def _fix_all_related_variables(self, df):
+        # ("severity_of_paresis", "tprs"),
+        #related_variables = pd.read_csv("related_variables.csv")
         related_variables = [
             ("apha", "cog"),
             ("cogloss", "cog"),
@@ -181,7 +184,7 @@ class DataSet:
             ("bi", "visit1_fir"),
             ("prs", "visit1_fir"),
             ("tprs", "prs"),
-            #("severity_of_paresis", "tprs"),
+            # ("severity_of_paresis", "tprs"),
             ("psi", "prs"),
             ("spas", "visit1_fir"),
             ("tspas", "spas"),
@@ -194,9 +197,13 @@ class DataSet:
             ("hypogon", "nnsym"),
             ("pd", "visit1_fir")
         ]
+        #for index, related_variabl_pair in related_variables.iterrows():
         for related_variabl_pair in related_variables:
             try:
-                df=self._fix_related_variables(df, related_variabl_pair[0], related_variabl_pair[1])
+        #        df = self._fix_related_variables(df, related_variabl_pair["target_var"],
+         #                                        related_variabl_pair["super_var"])
+                df = self._fix_related_variables(df, related_variabl_pair[0],
+                                                related_variabl_pair[1])
             except Exception as e:
                 print("Block entry doesnt work")
                 print(e)
