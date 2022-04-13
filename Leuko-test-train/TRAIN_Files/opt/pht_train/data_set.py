@@ -39,7 +39,7 @@ class DataSet:
         else:
             data_files_list = glob.glob(f"{self.data_path}/*")
             if len(data_files_list) != 1:
-                raise RuntimeError(f"one file expected but fund {len(data_files_list)}")
+                raise RuntimeError(f"one file expected but found {len(data_files_list)}")
             else:
                 try:
                     df = pd.read_csv(data_files_list[0])

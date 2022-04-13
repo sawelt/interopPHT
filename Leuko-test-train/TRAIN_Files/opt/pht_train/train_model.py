@@ -14,6 +14,7 @@ class TrainModel:
         self.model = self._train_model()
         self._save_model()
         self._save_results()
+        #self._load_model()
 
     def _train_model(self):
         model = SVC(kernel='linear', C=1, decision_function_shape='ovo', random_state=0, probability=True)
@@ -34,5 +35,13 @@ class TrainModel:
 
     def _save_model(self):
         number_models = len(glob.glob(f"{self.result_path}/*.joblib"))
-        dump(self.model, f'{self.result_path}/model_{number_models}.joblib')
+        with open(f'{self.result_path}/model_{number_models}.joblib', 'wb') as model_file:
+            dump(self.model, model_file)
 
+
+    def _load_model(self):
+        number_models = len(glob.glob(f"{self.result_path}/*.joblib"))
+        self.model = load(f'{self.result_path}/model_{number_models-1}.joblib')
+        y_pre_class_linear = self.model.predict(self.inputs)
+        accuracy = (y_pre_class_linear == self.targets.to_numpy()).all().mean()
+        print(accuracy)
