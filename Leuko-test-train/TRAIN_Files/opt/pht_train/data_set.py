@@ -122,8 +122,10 @@ class DataSet:
 
     def _fix_all_related_variables(self, df):
         # ("severity_of_paresis", "tprs"),
-        #related_variables = pd.read_csv("related_variables.csv")
-        related_variables = [
+        #has to be global
+        print(os.path.dirname(os.path.abspath(__file__)))
+        related_variables = pd.read_csv(f"{os.path.dirname(os.path.abspath(__file__))}/related_variables.csv")
+        '''  related_variables = [
             ("apha", "cog"),
             ("cogloss", "cog"),
             ("eap", "cog"),
@@ -196,14 +198,14 @@ class DataSet:
             ("addd", "nnsym"),
             ("hypogon", "nnsym"),
             ("pd", "visit1_fir")
-        ]
-        #for index, related_variabl_pair in related_variables.iterrows():
-        for related_variabl_pair in related_variables:
+        ]'''
+        for index, related_variable_pair in related_variables.iterrows():
+        #for related_variabl_pair in related_variables:
             try:
-        #        df = self._fix_related_variables(df, related_variabl_pair["target_var"],
-         #                                        related_variabl_pair["super_var"])
-                df = self._fix_related_variables(df, related_variabl_pair[0],
-                                                related_variabl_pair[1])
+                df = self._fix_related_variables(df, related_variable_pair["target_var"],
+                                                 related_variable_pair["super_var"])
+         #       df = self._fix_related_variables(df, related_variabl_pair[0],
+         #                                       related_variabl_pair[1])
             except Exception as e:
                 print("Block entry doesnt work")
                 print(e)
